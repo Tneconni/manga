@@ -1,5 +1,5 @@
 <?php
-class ModelMangaManga extends Model {
+class ModelMangaDirectory extends Model {
 
     /**
      * 获得相应的漫画列表

@@ -47,6 +47,34 @@ ORDER BY cpt.date_added DESC ";
             return array();
         }
     }
+
+    /**
+     * 通过漫画名称获得 章节
+     */
+    public function getChapterByManga( $data ){
+
+        $sql = "SELECT
+  c.num,
+  cd.title
+FROM
+  " . DB_PREFIX . "chapter AS c
+  LEFT JOIN " . DB_PREFIX . "chapter_description AS cd
+    ON c.`chapter_id` = cd.`chapter_id`
+  LEFT JOIN " . DB_PREFIX . "manga AS m
+    ON m.`manga_id` = c.`manga_id`
+  LEFT JOIN " . DB_PREFIX . "manga_description AS md
+    ON md.`manga_id` = m.`manga_id`
+WHERE md.`title` = '" . $data['manga'] . "'
+ORDER BY c.`date_added` DESC ;";
+        $query = $this->db->query( $sql );
+        if( $query->num_rows > 0){
+            return $query->rows;
+        }else{
+            return array();
+        }
+
+
+    }
 }
 
 

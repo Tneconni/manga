@@ -1,3 +1,4 @@
+<?php echo $header; ?>
 <div class="container">
     <div class="row-fluid">
         <div class="well">
@@ -6,25 +7,39 @@
             </legend>
             <div class="pagination" style="text-align:center">
                 <ul>
-                    <li><a href="#A" data-original-title="" title="">A</a></li>
-                    <li><a href="#B" data-original-title="" title="">B</a></li>
-                    <li><a href="#C" data-original-title="" title="">C</a></li>
+
+                    <?php foreach( $directory as $key=>$dir ){ ?>
+                    <li>
+                        <a href="#<?php echo $key; ?>" data-original-title="" title="">
+                            <?php echo $key; ?>
+                        </a>
+                    </li>
+                    <?php } ?>
+
                 </ul>
+            </div>
+            <div id="content">
+
+                <?php if(!empty($directory)){ ?>
+
+                <?php foreach($directory as $key=>$dir){ ?>
+                <hr style="border:#ccc;background-color:#ccc;">
+                <b>#<?php echo $key; ?></b>
+                <?php foreach($dir as $d){ ?>
+                <br/>
+                <a id="GEdition" class="directory_link"
+                   href="<?php echo $d['href'];?>"
+                   title="<?php echo $d['title'];?>" >
+                    <?php echo $d['title'];?>
+                </a>
+                <?php } ?>
+
+                <?php } ?>
+                <?php } ?>
             </div>
         </div>
     </div>
-    <div id="content">
-        <hr style="border:#ccc;background-color:#ccc;">
-        <b>#0-9</b>
-        <?php if(!empty($directory)){ ?>
-        <?php foreach($directory as $dir){ ?>
-        <a id="GEdition" class="directory_link" href="<?php echo $dir['href'];?>" title="<?php echo $dir['title'];?>" >
-            (G) Edition
-            <?php echo $dir['title'];?>
-        </a>
-        <?php } ?>
-        <?php } ?>
-    </div>
+
 </div>
 
 <script>
@@ -34,3 +49,4 @@
         match();
     })();
 </script>
+<?php echo $footer; ?>

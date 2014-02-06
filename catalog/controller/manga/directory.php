@@ -3,7 +3,7 @@ class ControllerMangaDirectory extends Controller {
 
     public function index(){
 
-        $this->load->model('manga/manga');
+        $this->load->model('manga/directory');
 
 
         if( isset($this->request->get['letter']) ){
@@ -16,12 +16,14 @@ class ControllerMangaDirectory extends Controller {
 
 
         $directory = $this->model_manga_directory->getDirectory( $data );
+
+
         $this->data['directory'] = $this->refactorDirectory( $directory );
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/manga/manga.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/manga/manga.tpl';
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/manga/directory.tpl')) {
+            $this->template = $this->config->get('config_template') . '/template/manga/directory.tpl';
         } else {
-            $this->template = 'default/template/manga/manga.tpl';
+            $this->template = 'default/template/manga/directory.tpl';
         }
 
         $this->children = array(
@@ -45,13 +47,17 @@ class ControllerMangaDirectory extends Controller {
 
             $firstLetter = strtoupper( $firstLetter );
             if( $firstLetter <= 'Z' && $firstLetter >= 'A' ){
-                $directryResult[ $firstLetter ][] = $title;
+                $single = array(
+                    'href' => $this->url->link( 'manga/chapter', 'manga=' . $title ),
+                    'title' => $title
+                );
+                $directryResult[ $firstLetter ][] = $single;
             }
 
         }
 
+        ksort( $directryResult );
         return $directryResult;
-
 
     }
 
