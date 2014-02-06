@@ -93,5 +93,43 @@ class Pagination {
 		
 		return ($output ? '<div class="' . $this->style_links . '">' . $output . '</div>' : '') . '<div class="' . $this->style_results . '">' . str_replace($find, $replace, $this->text) . '</div>';
 	}
+
+    /**
+     * @param $data
+     */
+    public static function getPage( $data ){
+        $count = $data['count'];
+        $urlLink = array();
+        $paramString = '';
+
+        if( !empty($data['param']) ){
+            $paramString = '&';
+            foreach( $data['param'] as $key=>$value){
+                $paramString .= $key . '=' . $value . '&';
+            }
+            $paramString = rtrim( $paramString, '&');
+        }
+
+        $currentPage = intval($data['currentPage']);
+
+        $prevPage = $currentPage - 1;
+        $nextPage = $currentPage + 1;
+        $urlLink['prev'] = HTTP_SERVER . '?route=' . $data['action']  . $paramString .'&page=' . $prevPage;
+        if( $prevPage < 1){
+            $urlLink['prev'] = 'javascript:void(0);';
+        }
+        $urlLink['next'] = HTTP_SERVER . '?route=' . $data['action']  . $paramString .'&page=' . $nextPage;
+
+        if( $nextPage > $count ){
+            $urlLink['next'] = 'javascript:void(0);';
+        }
+        $urlLink['page'] = array();
+        for($i = 0; $i < $count; $i ++){
+
+            $urlLink['page'][] = HTTP_SERVER . '?route=' . $data['action']  . $paramString .'&page=' . ($i+1);
+
+        }
+        return $urlLink;
+    }
 }
 ?>

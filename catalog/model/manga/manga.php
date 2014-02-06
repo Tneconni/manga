@@ -50,5 +50,43 @@ class ModelMangaManga extends Model {
 
     }
 
+    /**
+     * 通过 漫画名称 (或者漫画id)，章节号 获得章节
+     *
+     */
+    public function getChapterByManga( $sort ){
+        if( !empty($sort['mangaId'])){
+            $sql = "SELECT
+  c.*,
+  md.`title` as `title`
+FROM
+  " . DB_PREFIX . "chapter AS c
+  LEFT JOIN " . DB_PREFIX . "manga AS m
+    ON c.`manga_id` = m.`manga_id`
+  LEFT JOIN " . DB_PREFIX . "manga_description AS md
+    ON m.`manga_id` = md.`manga_id`
+    WHERE m.`manga_id`='" . $sort['mangaId'] . "' AND c.`num`='" . $sort['chapterNum'] . "' AND m.status='1'";
+        }else{
+            $sql = "SELECT
+  c.*,
+  md.`title` as `title`
+FROM
+  " . DB_PREFIX . "chapter AS c
+  LEFT JOIN " . DB_PREFIX . "manga AS m
+    ON c.`manga_id` = m.`manga_id`
+  LEFT JOIN " . DB_PREFIX . "manga_description AS md
+    ON m.`manga_id` = md.`manga_id`
+    WHERE md.`title`='" . $sort['mangaName'] . "' AND c.`num`='" . $sort['chapterNum'] . "' AND m.status='1'";
+        }
+
+        $query = $this->db->query( $sql );
+        if( $query->num_rows > 0){
+            return $query->row;
+        }else{
+            return array();
+        }
+
+    }
+
 }
 ?>
