@@ -88,5 +88,14 @@ FROM
 
     }
 
+    /**
+     * 通过 状态 id, 获得manga 的状态,
+     */
+    public function getMangaStatus( $statusId ){
+        $sql = "SELECT * FROM " . DB_PREFIX . "manga_status WHERE `manga_status_id`='" . $statusId . "'";
+        $query = $this->db->query( $sql );
+        return $query->row['value'];
+    }
+
 }
 ?>

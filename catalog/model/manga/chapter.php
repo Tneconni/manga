@@ -5,14 +5,17 @@ class ModelMangaChapter extends Model {
      * 获得章节目录
      * @return array
      */
-    public function getChapters(){
+    public function getChapters( $data = array() ){
 
         $sql = "SELECT
   cpt.`chapter_id`,
-  cpt.`image`,
+  mg.`image`,
+  mg.`status`,
+  cpt.`num`,
   cptd.`title` AS chapter_title,
   cpt.`date_added` AS create_date,
    mgd.`title` AS manga_title,
+   mgd.`description`,
    mgd.`author`,
 
    GROUP_CONCAT(gend.`title`) AS genre_title
@@ -34,10 +37,14 @@ LEFT JOIN " . DB_PREFIX . "manga_description AS mgd
     ON gen.`genre_id`=mtg.`genre_id`
 
     LEFT JOIN " . DB_PREFIX . "genre_description AS gend
-    ON gend.`genre_id`=gen.`genre_id`
+    ON gend.`genre_id`=gen.`genre_id`";
+
+    if( !empty($data['mangaName']) ){
+        $sql .= " where mgd.title='" . $data['mangaName'] . "' ";
+    }
 
 
-    GROUP BY cpt.`chapter_id`
+    $sql .= " GROUP BY cpt.`chapter_id`
 ORDER BY cpt.date_added DESC ";
 
         $query = $this->db->query( $sql );
@@ -73,6 +80,28 @@ ORDER BY c.`date_added` DESC ;";
             return array();
         }
 
+
+    }
+
+    /**
+     * 格式化数据
+     */
+    public function refactorChapter( $chapters ){
+        $this->load->model('tool/image');
+        foreach($chapters as $key=>$chapter ){
+
+            $timeAgo = time() - strtotime( $chapter['create_date']);
+            $chapters[$key]['timeAgo'] = date('H', $timeAgo) .' hours';
+
+            if( is_file(DIR_IMAGE . $chapter['image']) ){
+                $chapters[$key]['image'] = $this->model_tool_image->resize( $chapter['image'], 50, 100);
+            }else{
+                $chapters[$key]['image'] = $this->model_tool_image->resize( DEFAULT_IMAGE, 100, 100);
+
+            }
+            $chapters[$key]['href'] = $this->url->link('manga/manga', 'manga=' . $chapter['manga_title'] . '&chapter=' . $chapter['num']);
+        }
+        return $chapters;
 
     }
 }
